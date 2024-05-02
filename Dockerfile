@@ -1,19 +1,26 @@
 FROM ubuntu:24.04
 
-# Install required packages
-RUN apt update -y && \
-    apt install -y --no-install-recommends \
-        curl \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
         ca-certificates \
         build-essential \
+        zlib1g-dev \
+        libmbedtls-dev \
+        curl \
         && \
     apt clean all && \
     rm -rf /var/lib/apt/lists/*
 
-# Download and verify the get-gauche.sh script
-RUN curl -fsSL https://raw.githubusercontent.com/shirok/get-gauche/master/get-gauche.sh -o get-gauche.sh && \
-    echo "c3d9a86135ad52b7b840e2608cd2707a5d66a963b13ec3d87ca5cfbad493802d  get-gauche.sh" | sha256sum --check -
+RUN cd /tmp && \
+    curl -fsSL https://github.com/shirok/Gauche/releases/download/release0_9_15/Gauche-0.9.15.tgz -o Gauche-0.9.15.tgz && \
+    echo "3643e27bc7c8822cfd6fb2892db185f658e8e364938bc2ccfcedb239e35af783 Gauche-0.9.15.tgz" | sha256sum --check - && \
+    tar -xzf Gauche-0.9.15.tgz && \
+    mv Gauche-0.9.15 /usr/local/src/gauche && \
+    rm Gauche-0.9.15.tgz
 
-# RUN bash get-gauche.sh --auto --prefix=/bin
+RUN cd /usr/local/src/gauche && \
+    ./configure && \
+    make && \
+    make install
 
-ENV PATH="/root/.gauche/bin:${PATH}"
+RUN gosh -e '(print "Gauche installed successfully!")'
