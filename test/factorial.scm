@@ -1,10 +1,5 @@
 (use gauche.test)
-
-;; Function to calculate the factorial of a number
-(define (factorial n)
-  (if (< n 2)
-      1
-      (* n (factorial (- n 1)))))
+(include "../src/factorial")
 
 ;; Test cases
 (define (test-factorial)
