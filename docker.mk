@@ -12,4 +12,4 @@ clean:
 	docker image rm $(IMAGE)
 
 bash:
-	docker run -it --rm $(IMAGE) $@
+	docker run -it --rm -v $(PWD):/opt/hello-gauche -w /opt/hello-gauche $(IMAGE) $@
